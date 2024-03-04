@@ -1,171 +1,215 @@
-# Visual Inspection Automation with Amazon SageMaker
-
-<p align="center">
-  <a href="https://github.com/awslabs/sagemaker-defect-detection/actions"><img alt="Actions Status" src="https://github.com/awslabs/sagemaker-defect-detection/workflows/CI/badge.svg"></a>
-  <a href="https://github.com/awslabs/sagemaker-defect-detection/actions"><img alt="CodeQL Status" src="https://github.com/awslabs/sagemaker-defect-detection/workflows/CodeQL/badge.svg"></a>
-  <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+<div class="Box-sc-g0xbh4-0 bJMeLZ js-snippet-clipboard-copy-unpositioned" data-hpc="true"><article class="markdown-body entry-content container-lg" itemprop="text"><div class="markdown-heading" dir="auto"><h1 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 Amazon SageMaker 实现视觉检测自动化</font></font></h1><a id="user-content-visual-inspection-automation-with-amazon-sagemaker" class="anchor-element" aria-label="永久链接：使用 Amazon SageMaker 实现视觉检测自动化" href="#visual-inspection-automation-with-amazon-sagemaker"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p align="center" dir="auto">
+  <a href="https://github.com/awslabs/sagemaker-defect-detection/actions"><img alt="行动状态" src="https://github.com/awslabs/sagemaker-defect-detection/workflows/CI/badge.svg" style="max-width: 100%;"></a>
+  <a href="https://github.com/awslabs/sagemaker-defect-detection/actions"><img alt="CodeQL 状态" src="https://github.com/awslabs/sagemaker-defect-detection/workflows/CodeQL/badge.svg" style="max-width: 100%;"></a>
+  <a href="https://github.com/psf/black"><img alt="代码风格：黑色" src="https://camo.githubusercontent.com/7d770c433d6198d89f8c1e2f187b904a9721d176259d0e97157337741cc8e837/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636f64652532307374796c652d626c61636b2d3030303030302e737667" data-canonical-src="https://img.shields.io/badge/code%20style-black-000000.svg" style="max-width: 100%;"></a>
   <br>
-  <a href="https://github.com/awslabs/sagemaker-defect-detection/blob/mainline/LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/github/license/awslabs/sagemaker-defect-detection.svg"></a>
-  <a href="https://github.com/awslabs/sagemaker-defect-detection/graphs/commit-activity"><img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg"></a>
-  <a href="https://github.com/awslabs/sagemaker-defect-detection/issues/new?assignees=ehsanmok&labels=question&template=questions-or-general-feedbacks.md&title=%5BGeneral%5D"><img alt="AMA" src="https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg"></a>
+  <a href="https://github.com/awslabs/sagemaker-defect-detection/blob/mainline/LICENSE"><img alt="许可证：Apache-2.0" src="https://camo.githubusercontent.com/b65b4341deca9f887174ecb353206bb8dc5d57aa95b7bf9c105e3ffac05828ff/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f6177736c6162732f736167656d616b65722d6465666563742d646574656374696f6e2e737667" data-canonical-src="https://img.shields.io/github/license/awslabs/sagemaker-defect-detection.svg" style="max-width: 100%;"></a>
+  <a href="https://github.com/awslabs/sagemaker-defect-detection/graphs/commit-activity"><img alt="维护" src="https://camo.githubusercontent.com/50a927de513460609cfad453b7260a5882ecaef04403bf77b6eaf8839adbd32a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4d61696e7461696e65642533462d7965732d677265656e2e737667" data-canonical-src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" style="max-width: 100%;"></a>
+  <a href="https://github.com/awslabs/sagemaker-defect-detection/issues/new?assignees=ehsanmok&amp;labels=question&amp;template=questions-or-general-feedbacks.md&amp;title=%5BGeneral%5D"><img alt="美国医学协会" src="https://camo.githubusercontent.com/a8b620de578ba63ed29db854d674d8e938aa54c037bda277642e30227a2b8133/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f41736b2532306d652d616e797468696e672d3161626339632e737667" data-canonical-src="https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg" style="max-width: 100%;"></a>
  </p>
-
-This solution detects product defects with an end-to-end Deep Learning workflow for quality control in manufacturing process. The solution takes input of product images and identifies defect regions with bounding boxes. In particular, this solution takes two distinct approaches:
-1. Use an implementation of the *Defect Detection Network (DDN)* algorithm following [An End-to-End Steel Surface Defect Detection](https://ieeexplore.ieee.org/document/8709818) on [NEU surface defect database](http://faculty.neu.edu.cn/yunhyan/NEU_surface_defect_database.html) (see [resources](#resources)) in PyTorch using [PyTorch-lightning](https://github.com/PyTorchLightning/pytorch-lightning).
-2. Use a pre-trained Sagemaker object detection model and fine-tune on the target dataset.
-
-This solution will demonstrate the immense advantage of fine-tuning a high-quality pre-trained model on the target dataset, both visually and numerically.
-
-### Contents
-1. [Overview](#overview)
-   1. [What Does the Input Data Look Like?](#input)
-   2. [How to Prepare Your Data to Feed into the Model?](#preparedata)
-   3. [What are the Outputs?](#output)
-   4. [What is the Estimated Cost?](#cost)
-   5. [What Algorithms & Models are Used?](#algorithms)
-   6. [What Does the Data Flow Look Like?](#dataflow)
-2. [Solution Details](#solution)
-   1. [Background](#background)
-   2. [What is Visual Inspection?](#inspection)
-   3. [What are the Problems?](#problems)
-   4. [What Does this Solution Offer?](#offer)
-3. [Architecture Overview](#architecture)
-4. [Cleaning up](#cleaning-up)
-5. [Customization](#customization)
-
-
-## 1. Overview <a name="overview"></a>
-
-### 1.1. What Does the Input Data Look Like? <a name="input"></a>
-
-Input is an image of a defective / non-defective product. The training data should have relatively balanced classes, with annotations for ground truth defects (locations and defect types) per image. Here are examples of annotations used in the demo, they show some "inclusion" defects on the surface:
-
-!["sample2"](https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/sample2.png)
-
-The NEU surface defect database (see [references](#references)) is a *balanced* dataset which contains
-
-> Six kinds of typical surface defects of the hot-rolled steel strip are collected, i.e., rolled-in scale (RS), patches (Pa), crazing (Cr), pitted surface (PS), inclusion (In) and scratches (Sc). The database includes 1,800 grayscale images: 300 samples each of six different kinds of typical surface defects
-
-Here is a sample image of the six classes
-
-!["data sample"](https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/data.png)
-
-### 1.2. How to Prepare Your Data to Feed into the Model? <a name="preparedata"></a>
-
-There are data preparation and preprocessing steps and should be followed in the notebooks. It's critical to prepare your image annotations beforehand.
-* For training the DDN model, please prepare one xml file for each image with defect annotations. Check notebook 0,1,2,3 for details.
-* For finetuning pretrained Sagemaker models, you need to prepare either a single `annotation.json` for all data, or a `RecordIO` file for both all images and all annotations. Check notebook 4 for details.
-
-### 1.3. What are the Outputs? <a name="output"></a>
-
-* For each image, the trained model will produce bounding boxes of detected visual defects (if any), the predicted defect type, and prediction confidence score (0~1).
-* If you have a labeled test dataset, you could obtain the mean Average Precision (mAP) score for each model and compare among all the models.
-   * For example, the mAP scores on a test set of the NEU dataset
-
-     |     |   DDN  | Type1 | Type1+HPO | Type2 | Type2+HPO|
-     | --- |  --- | --- | --- | --- | ---|
-     | mAP |  0.08 | 0.067 | 0.226 | 0.371 | 0.375|
-
-
-### 1.4. What is the Estimated Cost? <a name="cost"></a>
-
-* Running solution notebook 0~3 end-to-end costs around $8 USD and less than an hour, assuming using p3.2xlarge EC2 instance, and $3.06 on-demand hourly rate in US East. These notebooks only train DDN models for a few iterations for demonstration purpose, which is **far from convergence**. It would take around 8 hours to train from scratch till convergence and cost $25+.
-* Running solution notebook 4 costs around $130~140 USD. This notebook provides advanced materials, including finetuning two types of pretrained Sagemaker models **till convergence**, with and without hyperparameter optimization (HPO), and result in four models for inference. You could choose to train either one model, or all four models according to your budget and requirements. The cost and runtime for training each model are:
-
-   | Model | Cost (USD) | Runtime (Hours) | Billable time (Hours)|
-   |:----------:|:---------------:|:----:|:-----:|
-   |Type 1|    1.5     |       0.5       | 0.5|
-   |Type 1 with HPO (20 jobs)|    30.6    |       1*        | 10|
-   |Type 2|    4.6     |       1.5       | 1.5|
-   |Type 2 with HPO (20 jobs)|     92     |       3*        | 30|
-  (*) HPO tasks in this solution consider 20 jobs in total and 10 jobs in parallel. So 1 actual runtime hour amounts to 10 billable cost hours.
-* Please make sure you have read the cleaning up part in [Section 4](#cleaning-up) after training to avoid incurred cost from deployed models.
-
-
-
-### 1.5. What Algorithms & Models are Used? <a name="algorithms"></a>
-
-* The DDN model is based on [Faster RCNN](https://arxiv.org/abs/1506.01497). For more details, please read the paper [An End-to-End Steel Surface Defect Detection](https://ieeexplore.ieee.org/document/8709818).
-* The pretrained Sagemaker models include SSD models and FasterRCNN model, using either VGG, ResNet, or MobileNet as backbone, pretrained on either ImageNet, COCO, VOC, or FPN dataset.
-
-### 1.6. What Does the Data Flow Look Like? <a name="dataflow"></a>
-
-![Data flow](https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/data_flow.png)
-
-## 2. Solution Details <a name="solution"></a>
-
-### 2.1. Background <a name="background"></a>
-
-According to the [Gartner study on the top 10 strategic tech trends for 2020](https://www.gartner.com/smarterwithgartner/gartner-top-10-strategic-technology-trends-for-2020/),  hyper-automation is the number one trend in 2020 and will continue advancing in future. When it comes to manufacturing, one of the main barriers to hyper-automation is in areas where Human involvements is still struggling to be reduced and intelligent systems have hard times to become on-par with Human visual recognition abilities and become mainstream, despite great advancement of Deep Learning in Computer Vision. This is mainly due to lack of enough annotated data (or when data is sparse) in areas such as _Quality Control_ sections where trained Human eyes still dominates.
-
-
-### 2.2. What is Visual Inspection? <a name="inspection"></a>
-
-The **analysis of products on the production line for the purpose of Quality Control**. According to [Everything you need to know about Visual Inspection with AI](https://nanonets.com/blog/ai-visual-inspection/), visual inspection can also be used for internal and external assessment of the various equipment in a production facility such as storage tanks, pressure vessels, piping, and other equipment which expands to many industries from Electronics, Medical, Food and Raw Materials.
-
-### 2.3. What are the Problems? <a name="problems"></a>
-
-* *Human visual inspection error* is a major factor in this area. According to the report [The Role of Visual Inspection in the 21st Century](https://www.osti.gov/servlets/purl/1476816)
-
-   > Most inspection tasks are much more complex and typically exhibit error rates of 20% to 30% (Drury & Fox, 1975)
-
-which directly translates to *cost*.
-* Cost: according to [glassdoor estimate](https://www.glassdoor.co.in/Salaries/us-quality-control-inspector-salary-SRCH_IL.0,2_IN1_KO3,28.htm), a trained quality inspector salary varies between 29K (US) - 64K per year.
-
-### 2.4. What Does this Solution Offer?  <a name="offer"></a>
-
-This solution offers
-1. an implementation of the state-of-the-art Deep Learning approach for automatic *Steel Surface Defect Detection* using **Amazon SageMaker**. The [model](https://ieeexplore.ieee.org/document/8709818) enhances [Faster RCNN](https://arxiv.org/abs/1506.01497) and outputs possible defects in an steel surface image.
-This solution trains a classifier on **NEU-CLS** dataset as well as a detector on **NEU-DET** dataset.
-2. a complete solution using high-quality pretrained Sagemaker models to finetune on the target dataset with and without hyperparameter optimization (HPO).
-
-The **most important** information this solution delivers, is that training a deep learning model from scratch on a small dataset can be both time-consuming and less effective, whereas finetuning a high-quality pretrained model, which was trained on large-scale dataset, could be both cost- and runtime-efficient and highly performant. Here are the sample detection results
-
-<img src="patches_116.jpeg" alt="drawing" width="1200"/>
-
-## 3. Architecture Overview <a name="architecture"></a>
-
-The following illustration is the architecture for the end-to-end training and deployment process
-
-!["Solution Architecture"](https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/train_arch.png)
-
-1. The input data located in an [Amazon S3](https://aws.amazon.com/s3/) bucket
-2. The provided [SageMaker notebook](source/deep_demand_forecast.ipynb) that gets the input data and launches the later stages below
-3. **Training Classifier and Detector models** and evaluating its results using Amazon SageMaker. If desired, one can deploy the trained models and create SageMaker endpoints
-4. **SageMaker endpoint** created from the previous step is an [HTTPS endpoint](https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-hosting.html) and is capable of producing predictions
-5.  Monitoring the training and deployed model via [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/)
-
-## 4. Cleaning up <a name="cleaning-up"></a>
-
-When you've finished with this solution, make sure that you delete all unwanted AWS resources. AWS CloudFormation can be used to automatically delete all standard resources that have been created by the solution and notebook. Go to the AWS CloudFormation Console, and delete the parent stack. Choosing to delete the parent stack will automatically delete the nested stacks.
-
-**Caution:** You need to manually delete any extra resources that you may have created in this notebook. Some examples include, extra Amazon S3 buckets (to the solution's default bucket), extra Amazon SageMaker endpoints (using a custom name).
-
-## 5. Customization <a name="customization"></a>
-
-For using your own data, make sure it is labeled and is a *relatively* balanced dataset. Also make sure the image annotations follow the required format.
-
-
-
-### Useful Links <a name="links"></a>
-
-* [Amazon SageMaker Getting Started](https://aws.amazon.com/sagemaker/getting-started/)
-* [Amazon SageMaker Developer Guide](https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html)
-* [Amazon SageMaker Python SDK Documentation](https://sagemaker.readthedocs.io/en/stable/)
-* [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
-
-### References
-
-* K. Song and Y. Yan, “A noise robust method based on completed local binary patterns for hot-rolled steel strip surface defects,” Applied Surface Science, vol. 285, pp. 858-864, Nov. 2013.
-
-* Yu He, Kechen Song, Qinggang Meng, Yunhui Yan, “An End-to-end Steel Surface Defect Detection Approach via Fusing Multiple Hierarchical Features,” IEEE Transactions on Instrumentation and Measuremente, 2020,69(4),1493-1504.
-
-* Hongwen Dong, Kechen Song, Yu He, Jing Xu, Yunhui Yan, Qinggang Meng, “PGA-Net: Pyramid Feature Fusion and Global Context Attention Network for Automated Surface Defect Detection,” IEEE Transactions on Industrial Informatics, 2020.
-
-### Security
-
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-### License
-
-This project is licensed under the Apache-2.0 License.
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">该解决方案通过端到端深度学习工作流程检测产品缺陷，以实现制造过程中的质量控制。</font><font style="vertical-align: inherit;">该解决方案接收产品图像的输入并通过边界框识别缺陷区域。</font><font style="vertical-align: inherit;">特别是，该解决方案采用两种不同的方法：</font></font></p>
+<ol dir="auto">
+<li><font style="vertical-align: inherit;"><a href="https://github.com/PyTorchLightning/pytorch-lightning"><font style="vertical-align: inherit;">使用PyTorch-lightning中的</font></a></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">缺陷检测网络 (DDN)</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">算法实现</font><font style="vertical-align: inherit;">，遵循PyTorch</font><font style="vertical-align: inherit;">中</font><a href="http://faculty.neu.edu.cn/yunhyan/NEU_surface_defect_database.html" rel="nofollow"><font style="vertical-align: inherit;">NEU 表面缺陷数据库的</font></a></font><a href="https://ieeexplore.ieee.org/document/8709818" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">端到端钢表面缺陷检测</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">（请参阅</font><a href="#resources"><font style="vertical-align: inherit;">参考资料</font></a><font style="vertical-align: inherit;">）</font><font style="vertical-align: inherit;">。</font></font><a href="http://faculty.neu.edu.cn/yunhyan/NEU_surface_defect_database.html" rel="nofollow"><font style="vertical-align: inherit;"></font></a><font style="vertical-align: inherit;"></font><a href="#resources"><font style="vertical-align: inherit;"></font></a><font style="vertical-align: inherit;"></font><a href="https://github.com/PyTorchLightning/pytorch-lightning"><font style="vertical-align: inherit;"></font></a><font style="vertical-align: inherit;"></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用预先训练的 Sagemaker 对象检测模型并在目标数据集上进行微调。</font></font></li>
+</ol>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">该解决方案将展示在目标数据集上微调高质量预训练模型的巨大优势，无论是在视觉上还是在数值上。</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">内容</font></font></h3><a id="user-content-contents" class="anchor-element" aria-label="永久链接： 内容" href="#contents"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ol dir="auto">
+<li><a href="#overview"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">概述</font></font></a>
+<ol dir="auto">
+<li><a href="#input"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">输入数据是什么样的？</font></font></a></li>
+<li><a href="#preparedata"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如何准备数据以输入模型？</font></font></a></li>
+<li><a href="#output"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">输出是什么？</font></font></a></li>
+<li><a href="#cost"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">预计费用是多少？</font></font></a></li>
+<li><a href="#algorithms"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用什么算法和模型？</font></font></a></li>
+<li><a href="#dataflow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据流是什么样的？</font></font></a></li>
+</ol>
+</li>
+<li><a href="#solution"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">解决方案详情</font></font></a>
+<ol dir="auto">
+<li><a href="#background"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">背景</font></font></a></li>
+<li><a href="#inspection"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">什么是目视检查？</font></font></a></li>
+<li><a href="#problems"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">存在哪些问题？</font></font></a></li>
+<li><a href="#offer"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">该解决方案提供什么？</font></font></a></li>
+</ol>
+</li>
+<li><a href="#architecture"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">架构概述</font></font></a></li>
+<li><a href="#cleaning-up"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">打扫干净</font></font></a></li>
+<li><a href="#customization"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">定制化</font></font></a></li>
+</ol>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1. 概述</font></font><a name="user-content-overview"></a></h2><a id="user-content-1-overview-" class="anchor-element" aria-label="永久链接： 1. 概述" href="#1-overview-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.1. </font><font style="vertical-align: inherit;">输入数据是什么样的？</font></font><a name="user-content-input"></a></h3><a id="user-content-11-what-does-the-input-data-look-like-" class="anchor-element" aria-label="永久链接：1.1。 输入数据是什么样的？" href="#11-what-does-the-input-data-look-like-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">输入是有缺陷/无缺陷产品的图像。</font><font style="vertical-align: inherit;">训练数据应该具有相对平衡的类别，并为每个图像提供地面实况缺陷（位置和缺陷类型）的注释。</font><font style="vertical-align: inherit;">以下是演示中使用的注释示例，它们在表面上显示了一些“包含”缺陷：</font></font></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/260a30d8651f65db3168eeade7d36e3ccd2a6485339b6d149e6cd4a05055a6d6/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f73616d706c65322e706e67"><img src="https://camo.githubusercontent.com/260a30d8651f65db3168eeade7d36e3ccd2a6485339b6d149e6cd4a05055a6d6/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f73616d706c65322e706e67" alt="“样本2”" data-canonical-src="https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/sample2.png" style="max-width: 100%;"></a></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">NEU 表面缺陷数据库（参见</font></font><a href="#references"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">参考资料</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">）是一个</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">平衡</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据集，其中包含</font></font></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">采集了热轧带钢的六种典型表面缺陷，即轧制氧化皮（RS）、斑块（Pa）、银纹（Cr）、麻点表面（PS）、夹杂物（In）和划伤（Sc） ）。</font><font style="vertical-align: inherit;">该数据库包含 1,800 张灰度图像：六种不同类型的典型表面缺陷各 300 个样本</font></font></p>
+</blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">这是六个类别的示例图像</font></font></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9ce0895a3e182e17a53a69a6f69f7c361e538291b13ed63ae29bca3d6d3ad86f/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f646174612e706e67"><img src="https://camo.githubusercontent.com/9ce0895a3e182e17a53a69a6f69f7c361e538291b13ed63ae29bca3d6d3ad86f/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f646174612e706e67" alt="“数据样本”" data-canonical-src="https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/data.png" style="max-width: 100%;"></a></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.2. </font><font style="vertical-align: inherit;">如何准备数据以输入模型？</font></font><a name="user-content-preparedata"></a></h3><a id="user-content-12-how-to-prepare-your-data-to-feed-into-the-model-" class="anchor-element" aria-label="永久链接：1.2。 如何准备数据以输入模型？" href="#12-how-to-prepare-your-data-to-feed-into-the-model-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">笔记本中应遵循数据准备和预处理步骤。</font><font style="vertical-align: inherit;">提前准备好图像注释至关重要。</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为了训练 DDN 模型，请为每张带有缺陷注释的图像准备一个 xml 文件。</font><font style="vertical-align: inherit;">检查笔记本 0、1、2、3 了解详细信息。</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为了微调预训练的 Sagemaker 模型，您需要</font></font><code>annotation.json</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为所有数据准备一个文件，或者</font></font><code>RecordIO</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为所有图像和所有注释准备一个文件。</font><font style="vertical-align: inherit;">检查笔记本 4 了解详细信息。</font></font></li>
+</ul>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.3. </font><font style="vertical-align: inherit;">输出是什么？</font></font><a name="user-content-output"></a></h3><a id="user-content-13-what-are-the-outputs-" class="anchor-element" aria-label="永久链接：1.3。 输出是什么？" href="#13-what-are-the-outputs-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于每幅图像，训练后的模型将生成检测到的视觉缺陷（如果有）的边界框、预测的缺陷类型和预测置信度得分（0~1）。</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果您有带标签的测试数据集，您可以获得每个模型的平均精度 (mAP) 分数，并在所有模型之间进行比较。
+</font></font><ul dir="auto">
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">例如，NEU 数据集测试集上的 mAP 分数</font></font></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">专线电话</font></font></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类型1</font></font></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1型+HPO</font></font></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类型2</font></font></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2型+HPO</font></font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">地图</font></font></td>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0.08</font></font></td>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0.067</font></font></td>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0.226</font></font></td>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0.371</font></font></td>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0.375</font></font></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.4. </font><font style="vertical-align: inherit;">预计费用是多少？</font></font><a name="user-content-cost"></a></h3><a id="user-content-14-what-is-the-estimated-cost-" class="anchor-element" aria-label="永久链接：1.4。 预计费用是多少？" href="#14-what-is-the-estimated-cost-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ul dir="auto">
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">假设使用 p3.2xlarge EC2 实例，并且美国东部的按需每小时费率为 3.06 美元，运行解决方案笔记本 0~3 端到端的成本约为 8 美元，不到一个小时。</font><font style="vertical-align: inherit;">这些笔记本仅出于演示目的训练 DDN 模型进行几次迭代，这与</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">收敛相去甚远</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">从头开始训练到收敛大约需要 8 个小时，成本超过 25 美元。</font></font></p>
+</li>
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行解决方案笔记本 4 的成本约为 130~140 美元。</font><font style="vertical-align: inherit;">该笔记本提供了先进的材料，包括微调两种类型的预训练 Sagemaker 模型</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">直至收敛</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">（使用或不使用超参数优化 (HPO)），并生成四种用于推理的模型。</font><font style="vertical-align: inherit;">您可以根据您的预算和要求选择训练一种模型或所有四种模型。</font><font style="vertical-align: inherit;">训练每个模型的成本和运行时间为：</font></font></p>
+<table>
+<thead>
+<tr>
+<th align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">模型</font></font></th>
+<th align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">成本（美元）</font></font></th>
+<th align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行时间（小时）</font></font></th>
+<th align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">计费时间（小时）</font></font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类型1</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.5</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0.5</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0.5</font></font></td>
+</tr>
+<tr>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1 类 HPO（20 个职位）</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30.6</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1*</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">10</font></font></td>
+</tr>
+<tr>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2型</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4.6</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.5</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.5</font></font></td>
+</tr>
+<tr>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">带有 HPO 的 2 型（20 个职位）</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">92</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3*</font></font></td>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">30</font></font></td>
+</tr>
+<tr>
+<td align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">(*) 此解决方案中的 HPO 任务总共考虑 20 个作业和 10 个并行作业。</font><font style="vertical-align: inherit;">因此，1 个实际运行时间相当于 10 个计费成本小时。</font></font></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"></font><a href="#cleaning-up"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">请确保您在训练后已阅读第 4 节</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">中的清理部分</font><font style="vertical-align: inherit;">，以避免因部署模型而产生成本。</font></font></p>
+</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.5. </font><font style="vertical-align: inherit;">使用什么算法和模型？</font></font><a name="user-content-algorithms"></a></h3><a id="user-content-15-what-algorithms--models-are-used-" class="anchor-element" aria-label="永久链接：1.5。 使用什么算法和模型？" href="#15-what-algorithms--models-are-used-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">DDN模型基于</font></font><a href="https://arxiv.org/abs/1506.01497" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Faster RCNN</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">欲了解更多详细信息，请阅读论文</font></font><a href="https://ieeexplore.ieee.org/document/8709818" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">《端到端钢表面缺陷检测》</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">预训练的 Sagemaker 模型包括 SSD 模型和 FasterRCNN 模型，使用 VGG、ResNet 或 MobileNet 作为主干，在 ImageNet、COCO、VOC 或 FPN 数据集上进行预训练。</font></font></li>
+</ul>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1.6. </font><font style="vertical-align: inherit;">数据流是什么样的？</font></font><a name="user-content-dataflow"></a></h3><a id="user-content-16-what-does-the-data-flow-look-like-" class="anchor-element" aria-label="永久链接：1.6。 数据流是什么样的？" href="#16-what-does-the-data-flow-look-like-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c7cb0be4f5e082812471b9d508a4f3004f4131e19ed5f1c78294b01fff95b9c8/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f646174615f666c6f772e706e67"><img src="https://camo.githubusercontent.com/c7cb0be4f5e082812471b9d508a4f3004f4131e19ed5f1c78294b01fff95b9c8/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f646174615f666c6f772e706e67" alt="数据流" data-canonical-src="https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/data_flow.png" style="max-width: 100%;"></a></p>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2. 解决方案详情</font></font><a name="user-content-solution"></a></h2><a id="user-content-2-solution-details-" class="anchor-element" aria-label="永久链接：2. 解决方案详细信息" href="#2-solution-details-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2.1. </font><font style="vertical-align: inherit;">背景</font></font><a name="user-content-background"></a></h3><a id="user-content-21-background-" class="anchor-element" aria-label="永久链接：2.1。 背景" href="#21-background-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">根据</font></font><a href="https://www.gartner.com/smarterwithgartner/gartner-top-10-strategic-technology-trends-for-2020/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gartner对2020年十大战略技术趋势的研究</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，超自动化是2020年的第一大趋势，并将在未来继续发展。</font><font style="vertical-align: inherit;">在制造方面，超自动化的主要障碍之一是人类参与仍在努力减少的领域，尽管智能系统取得了巨大进步，但仍很难与人类视觉识别能力相提并论并成为主流计算机视觉中的深度学习。</font><font style="vertical-align: inherit;">这主要是由于在</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">质量控制</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">部分等领域缺乏足够的注释数据（或当数据稀疏时），而受过训练的人眼仍然占主导地位。</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2.2. </font><font style="vertical-align: inherit;">什么是目视检查？</font></font><a name="user-content-inspection"></a></h3><a id="user-content-22-what-is-visual-inspection-" class="anchor-element" aria-label="永久链接：2.2。 什么是目视检查？" href="#22-what-is-visual-inspection-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">出于质量控制的目的对生产线上的产品进行</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">分析</font><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">根据</font></font><a href="https://nanonets.com/blog/ai-visual-inspection/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">《关于人工智能视觉检测你需要了解的一切》</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，视觉检测还可以用于对生产设施中的各种设备进行内部和外部评估，例如储罐、压力容器、管道和其他设备，扩展到许多行业来自电子、医疗、食品和原材料。</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2.3. </font><font style="vertical-align: inherit;">存在哪些问题？</font></font><a name="user-content-problems"></a></h3><a id="user-content-23-what-are-the-problems-" class="anchor-element" aria-label="永久链接：2.3。 存在哪些问题？" href="#23-what-are-the-problems-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ul dir="auto">
+<li>
+<p dir="auto"><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">人类视觉检查误差</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">是该领域的一个主要因素。</font><font style="vertical-align: inherit;">根据报告《</font></font><a href="https://www.osti.gov/servlets/purl/1476816" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">目视检查在 21 世纪的作用》</font></font></a></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">大多数检查任务要复杂得多，错误率通常为 20% 到 30% (Drury &amp; Fox, 1975)</font></font></p>
+</blockquote>
+</li>
+</ul>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">这直接转化为</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">成本</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">成本：根据</font></font><a href="https://www.glassdoor.co.in/Salaries/us-quality-control-inspector-salary-SRCH_IL.0,2_IN1_KO3,28.htm" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">glassdoor 估计</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，经过培训的质量检验员的年薪在 29K（美国）至 64K 之间。</font></font></li>
+</ul>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2.4. </font><font style="vertical-align: inherit;">该解决方案提供什么？  </font></font><a name="user-content-offer"></a></h3><a id="user-content-24-what-does-this-solution-offer--" class="anchor-element" aria-label="永久链接：2.4。 该解决方案提供什么？  " href="#24-what-does-this-solution-offer--"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">该解决方案提供</font></font></p>
+<ol dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用</font><strong><font style="vertical-align: inherit;">Amazon SageMaker实现自动</font></strong></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">钢表面缺陷检测</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">的最先进的深度学习方法</font><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">该</font><a href="https://ieeexplore.ieee.org/document/8709818" rel="nofollow"><font style="vertical-align: inherit;">模型</font></a><font style="vertical-align: inherit;">增强了</font><a href="https://arxiv.org/abs/1506.01497" rel="nofollow"><font style="vertical-align: inherit;">Faster RCNN</font></a><font style="vertical-align: inherit;">，并输出钢铁表面图像中可能存在的缺陷。</font><strong><font style="vertical-align: inherit;">该解决方案在NEU-CLS</font></strong><font style="vertical-align: inherit;">数据集上训练分类器</font><font style="vertical-align: inherit;">，并在</font><strong><font style="vertical-align: inherit;">NEU-DET</font></strong><font style="vertical-align: inherit;">数据集上训练检测器。</font></font><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;"></font><a href="https://ieeexplore.ieee.org/document/8709818" rel="nofollow"><font style="vertical-align: inherit;"></font></a><font style="vertical-align: inherit;"></font><a href="https://arxiv.org/abs/1506.01497" rel="nofollow"><font style="vertical-align: inherit;"></font></a><font style="vertical-align: inherit;"></font><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;"></font><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;"></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">完整的解决方案，使用高质量的预训练 Sagemaker 模型在带或不带超参数优化 (HPO) 的情况下对目标数据集进行微调。</font></font></li>
+</ol>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">该解决方案提供的最</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">重要的</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">信息是，在小型数据集上从头开始训练深度学习模型可能既耗时又效率低下，而对在大规模数据集上训练的高质量预训练模型进行微调可能会既具有成本效益、运行时间效益，又具有高性能。</font><font style="vertical-align: inherit;">以下是检测结果样本</font></font></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="/awslabs/sagemaker-defect-detection/blob/mainline/patches_116.jpeg"><img src="/awslabs/sagemaker-defect-detection/raw/mainline/patches_116.jpeg" alt="绘画" width="1200" style="max-width: 100%;"></a></p>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3. 架构概述</font></font><a name="user-content-architecture"></a></h2><a id="user-content-3-architecture-overview-" class="anchor-element" aria-label="永久链接：3. 架构概述" href="#3-architecture-overview-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下图是端到端训练和部署流程的架构</font></font></p>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e26e8d31dcc2330e6451d5779dc9194743d7d19a797960368699503d1f9a3241/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f747261696e5f617263682e706e67"><img src="https://camo.githubusercontent.com/e26e8d31dcc2330e6451d5779dc9194743d7d19a797960368699503d1f9a3241/68747470733a2f2f736167656d616b65722d736f6c7574696f6e732d70726f642d75732d656173742d322e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f736167656d616b65722d6465666563742d646574656374696f6e2f646f63732f747261696e5f617263682e706e67" alt="《解决方案架构》" data-canonical-src="https://sagemaker-solutions-prod-us-east-2.s3.us-east-2.amazonaws.com/sagemaker-defect-detection/docs/train_arch.png" style="max-width: 100%;"></a></p>
+<ol dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">输入数据位于</font></font><a href="https://aws.amazon.com/s3/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Amazon S3</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">存储桶中</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">提供的</font></font><a href="/awslabs/sagemaker-defect-detection/blob/mainline/source/deep_demand_forecast.ipynb"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">SageMaker 笔记本</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">获取输入数据并启动下面的后续阶段</font></font></li>
+<li><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 Amazon SageMaker 训练</font><strong><font style="vertical-align: inherit;">分类器和检测器模型并评估其结果。</font></strong><font style="vertical-align: inherit;">如果需要，可以部署经过训练的模型并创建 SageMaker 端点</font></font></li>
+<li><strong><font style="vertical-align: inherit;"></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">从上一步创建的</font><strong><font style="vertical-align: inherit;">SageMaker 端点是</font></strong></font><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-hosting.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">HTTPS 端点</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，能够生成预测</font></font></li>
+<li><font style="vertical-align: inherit;"><a href="https://aws.amazon.com/cloudwatch/" rel="nofollow"><font style="vertical-align: inherit;">通过Amazon CloudWatch</font></a><font style="vertical-align: inherit;">监控训练和部署的模型</font></font><a href="https://aws.amazon.com/cloudwatch/" rel="nofollow"><font style="vertical-align: inherit;"></font></a></li>
+</ol>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4. 清理</font></font><a name="user-content-cleaning-up"></a></h2><a id="user-content-4-cleaning-up-" class="anchor-element" aria-label="永久链接：4.清理" href="#4-cleaning-up-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">当您完成此解决方案后，请确保删除所有不需要的 AWS 资源。</font><font style="vertical-align: inherit;">AWS CloudFormation 可用于自动删除解决方案和笔记本创建的所有标准资源。</font><font style="vertical-align: inherit;">转到 AWS CloudFormation 控制台，然后删除父堆栈。</font><font style="vertical-align: inherit;">选择删除父堆栈将自动删除嵌套堆栈。</font></font></p>
+<p dir="auto"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您需要手动删除在此笔记本中创建的任何额外资源。</font><font style="vertical-align: inherit;">一些示例包括额外的 Amazon S3 存储桶（到解决方案的默认存储桶）、额外的 Amazon SageMaker 终端节点（使用自定义名称）。</font></font></p>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5. 定制</font></font><a name="user-content-customization"></a></h2><a id="user-content-5-customization-" class="anchor-element" aria-label="永久链接：5.定制" href="#5-customization-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于使用您自己的数据，请确保它是有标签的并且是一个</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">相对</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">平衡的数据集。</font><font style="vertical-align: inherit;">还要确保图像注释遵循所需的格式。</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有用的链接</font></font><a name="user-content-links"></a></h3><a id="user-content-useful-links-" class="anchor-element" aria-label="永久链接：有用的链接" href="#useful-links-"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ul dir="auto">
+<li><a href="https://aws.amazon.com/sagemaker/getting-started/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Amazon SageMaker 入门</font></font></a></li>
+<li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Amazon SageMaker 开发人员指南</font></font></a></li>
+<li><a href="https://sagemaker.readthedocs.io/en/stable/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Amazon SageMaker Python SDK 文档</font></font></a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">AWS CloudFormation 用户指南</font></font></a></li>
+</ul>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">参考</font></font></h3><a id="user-content-references" class="anchor-element" aria-label="永久链接：参考文献" href="#references"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<ul dir="auto">
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">K. Song 和 Y. Yan，“基于完整局部二值模式的热轧钢带表面缺陷的噪声鲁棒方法”，应用表面科学，卷。</font><font style="vertical-align: inherit;">285，第 858-864 页，2013 年 11 月。</font></font></p>
+</li>
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">何宇，宋克辰，孟庆刚，颜云辉，“一种融合多个层次特征的端到端钢铁表面缺陷检测方法”，IEEE Transactions on Instrumentation andMeasuremente，2020,69(4),1493-1504。</font></font></p>
+</li>
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Hongwen Dong、Kechen Song、Yu He、Jing Xu、Yunhui Yan、Qinggang Men，“PGA-Net：用于自动表面缺陷检测的金字塔特征融合和全局上下文注意网络”，IEEE 工业信息学汇刊，2020 年。</font></font></p>
+</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">安全</font></font></h3><a id="user-content-security" class="anchor-element" aria-label="永久链接：安全" href="#security"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">请参阅</font></font><a href="/awslabs/sagemaker-defect-detection/blob/mainline/CONTRIBUTING.md#security-issue-notifications"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">贡献</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以获取更多信息。</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">执照</font></font></h3><a id="user-content-license" class="anchor-element" aria-label="永久链接：许可证" href="#license"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">该项目根据 Apache-2.0 许可证获得许可。</font></font></p>
+</article></div>
